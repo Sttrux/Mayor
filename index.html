@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alcalde de la desigualdad</title>
+<style>
+:root{--bg:#f4f6f8;--card:#fff;--tx:#0f1b2d;--mut:#586377;--ln:#dde2e8;--ac:#0f2a4a;--act:#fff;--low:#d9532b;--mid:#b8a674;--hi:#0f7a8a;--bad:#b3261e;--ok:#1f7a4d;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1520;--card:#152030;--tx:#e9eef4;--mut:#9ba8ba;--ln:#263548;--ac:#e9eef4;--act:#0d1520;--low:#ee7a55;--mid:#cdbd8c;--hi:#3fb4c4;--bad:#ff8a80;--ok:#6fd3a0;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0d1520;--card:#152030;--tx:#e9eef4;--mut:#9ba8ba;--ln:#263548;--ac:#e9eef4;--act:#0d1520;--low:#ee7a55;--mid:#cdbd8c;--hi:#3fb4c4;--bad:#ff8a80;--ok:#6fd3a0;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:680px;margin:0 auto;padding:20px 16px 48px}
+h1{font:600 30px/1.1 "Iowan Old Style",Georgia,serif;margin:0 0 6px;letter-spacing:-.01em}
+h2{font:600 19px/1.25 "Iowan Old Style",Georgia,serif;margin:0 0 4px}
+p{margin:0 0 10px}
+.sub{color:var(--mut)}
+.sm{font-size:13px;color:var(--mut)}
+.card{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:16px;margin:14px 0}
+.hd{margin-bottom:12px}
+.ic{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.steps{padding:0;margin:0 0 12px;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:12px;margin:0 0 10px}
+.steps li:before{content:counter(s);flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--ac);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600}
+.go{background:var(--ac);color:var(--act);border:0;border-radius:8px;padding:12px 20px;font:600 16px system-ui,sans-serif;cursor:pointer}
+.go:focus-visible,.pol:focus-visible{outline:3px solid var(--hi);outline-offset:2px}
+.prog{display:grid;grid-template-columns:repeat(10,1fr);gap:3px;margin:6px 0 4px}
+.prog i{height:5px;border-radius:3px;background:var(--ln)}
+.prog i.on{background:var(--ac)}
+.goal{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--ln);font-size:14px}
+.goal:first-of-type{border-top:0}
+.goal b{white-space:nowrap}
+.ok{color:var(--ok)}.bad{color:var(--bad)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.st{border:1px solid var(--ln);border-radius:8px;padding:10px 12px;background:var(--card)}
+.st .l{font-size:13px;font-weight:600}
+.st b{display:block;font-size:22px;font-family:"Iowan Old Style",Georgia,serif}
+.meter{height:6px;background:var(--ln);border-radius:3px;overflow:hidden;margin:2px 0 4px}
+.meter i{display:block;height:100%;width:0;background:var(--ok);transition:width .5s,background .5s}
+#chart{position:relative;height:190px;display:flex;align-items:flex-end;gap:3px;border-bottom:1.5px solid var(--ln);margin-top:8px}
+#chart .b{flex:1;border-radius:2px 2px 0 0;position:relative;z-index:2;transition:height .6s,background .6s}
+#band{position:absolute;left:0;right:0;background:var(--hi);opacity:.13;z-index:1;transition:all .6s}
+#mline{position:absolute;left:0;right:0;border-top:1.5px dashed var(--tx);z-index:3;transition:bottom .6s}
+#mlab{position:absolute;right:0;z-index:4;font-size:11px;background:var(--card);padding:0 4px;border-radius:3px;transition:bottom .6s;transform:translateY(50%)}
+.leg{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--mut);margin-top:10px}
+.sw{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.pol{display:flex;gap:12px;width:100%;text-align:left;background:var(--bg);color:var(--tx);border:1px solid var(--ln);border-radius:10px;padding:12px;margin:0 0 8px;font:inherit;cursor:pointer}
+.pol:hover:not(:disabled){border-color:var(--ac)}
+.pol:disabled{opacity:.45;cursor:not-allowed}
+.pol b{display:block}
+.pol span{display:block;font-size:14px}
+.pol small{display:block;color:var(--mut);font-size:13px;margin-top:2px}
+#log{border-left:3px solid var(--hi);padding-left:12px;font-size:14px}
+.strip{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.strip figure{margin:0}
+.strip figcaption{font-size:13px;color:var(--mut);margin-top:4px}
+.mod{position:fixed;inset:0;background:rgba(5,10,18,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50;overflow:auto}
+.mod .card{max-width:440px;width:100%;margin:0}
+.hide,.mod.hide{display:none}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-top:1px solid var(--ln);font-size:14px}
+.chip{display:inline-block;border:1px solid var(--ln);border-radius:6px;padding:2px 8px;margin:0 4px 4px 0;font-size:13px}
+details summary{cursor:pointer;font-weight:600}
+details p{font-size:14px;margin:8px 0 0;display:flex;gap:8px;align-items:center}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-imp" viewBox="0 0 24 24"><circle cx="12" cy="6" r="3.5"/><path d="M4 13h16M6 17h12M8 21h8"/></symbol>
+<symbol id="i-sub" viewBox="0 0 24 24"><circle cx="14" cy="7" r="3.5"/><path d="M3 15h5l4 3h6a2 2 0 0 0 0-4h-4"/></symbol>
+<symbol id="i-sal" viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 9h6M9 13h6M9 17h4"/></symbol>
+<symbol id="i-edu" viewBox="0 0 24 24"><path d="M2 9l10-5 10 5-10 5z"/><path d="M6 11v5c3 2.5 9 2.5 12 0v-5"/></symbol>
+<symbol id="i-emp" viewBox="0 0 24 24"><path d="M3 21V10l6 4v-4l6 4V6h3v15z"/></symbol>
+<symbol id="i-nada" viewBox="0 0 24 24"><path d="M9 5v14M15 5v14"/></symbol>
+</defs></svg>
+<main>
+<section id="intro">
+  <h1>Alcalde de la desigualdad</h1>
+  <p class="sub">Gobierna una ciudad de 20 habitantes durante 10 meses y observa cómo tus decisiones cambian la sociedad.</p>
+  <div class="card">
+    <h2>Cómo se juega</h2>
+    <p class="sm hd">Cada mes repites estos tres pasos.</p>
+    <ol class="steps">
+      <li><div><b>Elige una política.</b> Cada una ayuda a unos grupos y perjudica a otros.</div></li>
+      <li><div><b>Lee el impacto.</b> Una ventana te explica qué cambió y por qué.</div></li>
+      <li><div><b>Observa la ciudad.</b> Los edificios, el cielo y las personas reflejan cómo viven todos.</div></li>
+    </ol>
+  </div>
+  <div class="card">
+    <h2>La desviación estándar (σ), en simple</h2>
+    <p>Mide qué tan diferentes son los ingresos entre sí. Si todos ganan parecido, σ es baja. Si unos ganan muchísimo y otros casi nada, σ es alta. Dos ciudades pueden tener el mismo ingreso promedio y ser muy distintas: el promedio esconde la desigualdad.</p>
+    <p class="sm">Desde la sociología: una σ alta indica estratificación fuerte, poca movilidad social y menos cohesión entre grupos.</p>
+  </div>
+  <div class="card">
+    <h2>Punto de partida y metas</h2>
+    <p>Tu ciudad empieza en muy mala situación: una élite diminuta concentra casi toda la riqueza, la mayoría apenas llega a fin de mes y la gente ya está molesta. Hay protestas en las calles desde el primer día.</p>
+    <p><b>Para ganar al terminar el mes 10</b> debes cumplir tres metas. Ninguna está cumplida al empezar:</p><p>1. Reducir σ al menos 40%.<br>2. Lograr que los 10 más pobres ganen en promedio $4,500 o más (hoy ganan unos $2,250).<br>3. Bajar el descontento social a menos de 40%.</p><p class="sm">Cada mes ocurre un evento aleatorio, desde plagas hasta escándalos. Si el descontento llega a 100%, hay estallido social y pierdes.</p>
+    <button class="go" id="start">Empezar a gobernar</button>
+  </div>
+</section>
+
+<section id="game" class="hide">
+  <h1>Alcalde de la desigualdad</h1>
+  <div class="sm">Mes <b id="sR"></b> de 10</div>
+  <div class="prog" id="prog"></div>
+
+  <div class="card">
+    <h2>Tus metas</h2>
+    <p class="sm hd">Cumple las tres al terminar el mes 10.</p>
+    <div id="goals"></div>
+  </div>
+
+  <div class="card">
+    <h2>Tu ciudad</h2>
+    <p class="sm" id="cap"></p>
+    <svg id="scene" viewBox="0 0 300 110" role="img" aria-label="Vista de la ciudad" style="width:100%;border-radius:8px"></svg>
+  </div>
+
+  <div class="stats">
+    <div class="st"><div class="l">Desviación estándar (σ)</div><b id="sS"></b><div class="sm">Qué tan distintos son los ingresos. Menos es mejor.</div></div>
+    <div class="st"><div class="l">Ingreso promedio</div><b id="sM"></b><div class="sm" id="sMd"></div></div>
+    <div class="st"><div class="l">Descontento social</div><b id="sD"></b><div class="meter"><i id="dm"></i></div><div class="sm">Tensión entre la población.</div></div>
+    <div class="st"><div class="l">Fondo público</div><b id="sB"></b><div class="sm">Entran $1,000 cada mes.</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Ingreso de cada habitante</h2>
+    <p class="sm" id="ratio"></p>
+    <div id="chart"><div id="band"></div><div id="mline"></div><span id="mlab">Promedio</span></div>
+    <div class="leg"><span><i class="sw" style="background:var(--low)"></i>Estrato bajo</span><span><i class="sw" style="background:var(--mid)"></i>Estrato medio</span><span><i class="sw" style="background:var(--hi)"></i>Estrato alto</span><span>Franja azul: zona de ±1 σ alrededor del promedio</span></div>
+  </div>
+
+  <div class="card"><div id="log"></div></div>
+
+  <div class="card">
+    <h2>Elige una política</h2>
+    <p class="sm hd">Cada una se puede usar 3 veces como máximo.</p>
+    <div id="pols"></div>
+  </div>
+  <div id="leg1"></div>
+</section>
+
+<section id="end" class="hide">
+  <h1 id="eT"></h1>
+  <p class="sub" id="eS"></p>
+  <div class="card"><div id="strip" class="strip"></div><div id="eB"></div><button class="go" id="again">Jugar otra vez</button></div>
+  <div id="leg2"></div>
+</section>
+</main>
+<div id="modal" class="mod hide" role="dialog" aria-modal="true"><div class="card" id="mc"></div></div>
+<script>
+(function(){
+var START=[900,1200,1500,1800,2000,2300,2600,3000,3400,3800,4300,5000,5800,7000,8500,11000,15000,22000,32000,48000];
+var mean=function(a){return a.reduce(function(x,y){return x+y;},0)/a.length;};
+var sd=function(a){var m=mean(a);return Math.sqrt(mean(a.map(function(x){return (x-m)*(x-m);})));};
+var M0=mean(START),S0=sd(START);
+var money=function(n){return "$"+Math.round(n).toLocaleString("es-MX");};
+var $=function(i){return document.getElementById(i);};
+var clamp=function(v,a,b){return Math.max(a,Math.min(b,v));};
+var ic=function(id){return '<svg class="ic" aria-hidden="true"><use href="#i-'+id+'"/></svg>';};
+var st;
+function order(){return st.inc.map(function(v,i){return i;}).sort(function(a,b){return st.inc[a]-st.inc[b];});}
+function low(n){return order().slice(0,n);}
+function top(n){return order().slice(-n);}
+
+var POL=[
+{id:"imp",name:"Impuesto progresivo",desc:"Los 5 más ricos pagan 20% de su ingreso y ese dinero se reparte entre los 10 más pobres.",risk:"Sin costo. Molesta a los más ricos.",cost:0,fn:function(){
+  var t=top(5),l=low(10),pool=0;
+  t.forEach(function(i){var c=st.inc[i]*0.2;st.inc[i]-=c;pool+=c;});
+  l.forEach(function(i){st.inc[i]+=pool/10;});
+  st.shock+=10;return "Los más ricos protestan, pero los hogares más pobres reciben un respiro.";}},
+{id:"sub",name:"Subsidio a la base",desc:"Los 5 más pobres reciben $1,500 adicionales cada uno.",risk:"Cuesta $3,000 del fondo público.",cost:3000,fn:function(){
+  low(5).forEach(function(i){st.inc[i]+=1500;});st.shock-=3;return "Un apoyo directo llega a los hogares con menos recursos.";}},
+{id:"sal",name:"Salario mínimo de $5,000",desc:"Quien gana menos de $5,000 sube a esa cifra.",risk:"Sin costo. Una persona pierde su empleo.",cost:0,fn:function(){
+  var l=low(10);
+  st.inc.forEach(function(v,i){if(v<5000)st.inc[i]=5000;});
+  var v=l[Math.floor(Math.random()*l.length)];st.inc[v]=0;st.shock+=4;
+  return "Sube el piso salarial, pero un habitante queda desempleado.";}},
+{id:"edu",name:"Educación pública",desc:"Los 10 más pobres ganan 10% más ahora y otro 10% el mes siguiente.",risk:"Cuesta $2,000 del fondo público.",cost:2000,fn:function(){
+  var l=low(10);l.forEach(function(i){st.inc[i]*=1.1;});st.edu=l;st.shock-=2;
+  return "Se invierte en escuelas; el efecto continúa el próximo mes.";}},
+{id:"emp",name:"Recorte de impuestos a empresas",desc:"Los 5 más ricos ganan 15% más y el resto 2% más.",risk:"Sin costo. Concentra la riqueza arriba.",cost:0,fn:function(){
+  var t=top(5);
+  st.inc.forEach(function(v,i){st.inc[i]=t.indexOf(i)>=0?v*1.15:v*1.02;});st.shock+=9;
+  return "La economía crece, pero casi todo el beneficio queda en los estratos altos.";}},
+{id:"nada",name:"No hacer nada",desc:"Dejas que el mercado actúe solo. Solo ocurre el evento del mes.",risk:"Sin costo ni efecto directo.",cost:0,fn:function(){return "Dejas que el mercado decida.";}}
+];
+var SH={imp:"Impuesto",sub:"Subsidio",sal:"Sal. mínimo",edu:"Educación",emp:"Empresas",nada:"Inacción"};
+var all=function(){return st.inc.map(function(v,i){return i;});};
+var mul=function(ix,f){ix.forEach(function(i){st.inc[i]*=f;});};
+var plus=function(ix,v){ix.forEach(function(i){st.inc[i]+=v;});};
+var pick=function(ix,n){var a=ix.slice(),r=[];while(r.length<n&&a.length)r.push(a.splice(Math.floor(Math.random()*a.length),1)[0]);return r;};
+var midg=function(){return order().slice(6,14);};
+var EV=[
+{t:"Plaga de langosta",fn:function(){mul(pick(low(10),6),0.85);st.shock+=3;return "Plaga de langosta: una nube de insectos arrasa los cultivos. Seis familias humildes que viven del campo pierden 15% de su ingreso.";}},
+{t:"Inundación",fn:function(){mul(low(8),0.9);st.shock+=3;return "Inundación: las lluvias anegan los barrios bajos. Los 8 hogares más pobres gastan 10% de su ingreso en reparaciones.";}},
+{t:"Apagón general",fn:function(){mul(all(),0.97);st.shock+=2;return "Apagón general: tres días sin luz paralizan comercios y talleres. Todos pierden 3% de ingreso.";}},
+{t:"Escándalo de corrupción",fn:function(){st.budget=Math.max(0,st.budget-1500);st.shock+=8;return "Escándalo de corrupción: se filtra que funcionarios desviaron dinero público. El fondo pierde $1,500 y la indignación se dispara.";}},
+{t:"Hallazgo de litio",fn:function(){var t=top(5);st.inc.forEach(function(v,i){st.inc[i]=t.indexOf(i)>=0?v*1.2:v*1.03;});st.shock+=4;return "Hallazgo de litio: una minera descubre un yacimiento cercano. Los 5 más ricos ganan 20% y el resto apenas 3%.";}},
+{t:"Cierre de fábrica",fn:function(){mul(pick(low(14),2),0.4);st.shock+=5;return "Cierre de fábrica: la planta principal despide personal. Dos trabajadores pierden 60% de su ingreso.";}},
+{t:"Festival turístico",fn:function(){mul(midg(),1.12);st.shock-=3;return "Festival turístico: llegan visitantes de toda la región. Los 8 habitantes de ingreso medio ganan 12% con ventas y hospedaje.";}},
+{t:"Brote de gripe",fn:function(){mul(all(),0.96);mul(low(10),0.94);st.shock+=4;return "Brote de gripe: cierran comercios por una semana. Todos pierden 4% y los 10 más pobres pierden otro 6% sin servicio médico.";}},
+{t:"Huelga de transporte",fn:function(){mul(all(),0.98);st.shock+=5;return "Huelga de transporte: los choferes paran y nadie llega a trabajar. Todos pierden 2% y la gente se enoja.";}},
+{t:"Remesas",fn:function(){plus(low(6),500);st.shock-=2;return "Remesas: familiares en el extranjero mandan dinero. Los 6 más pobres reciben $500 cada uno.";}},
+{t:"Inflación",fn:function(){mul(all(),0.97);mul(low(10),0.97);st.shock+=3;return "Inflación: suben los precios de la comida. Todos pierden 3% de poder de compra y los 10 más pobres otro 3%.";}},
+{t:"Auge exportador",fn:function(){var t=top(5);st.inc.forEach(function(v,i){st.inc[i]=t.indexOf(i)>=0?v*1.1:v*1.04;});return "Auge exportador: los productos locales se venden bien afuera. Todos ganan 4%, y los 5 más ricos ganan 10%.";}},
+{t:"Ola de calor",fn:function(){mul(low(8),0.94);st.shock+=2;return "Ola de calor: temperaturas récord frenan el trabajo al aire libre. Los 8 más pobres pierden 6%.";}},
+{t:"Llega una cadena de tiendas",fn:function(){plus(low(5),600);mul(midg(),0.95);return "Llega una cadena de tiendas: da empleo a los 5 más pobres (+$600), pero los comercios locales de ingreso medio pierden 5%.";}},
+{t:"Ola de inseguridad",fn:function(){mul(midg(),0.95);st.shock+=5;return "Ola de inseguridad: aumentan los robos a negocios. Los 8 de ingreso medio pierden 5% y crece el miedo.";}},
+{t:"Becas de una ONG",fn:function(){plus(low(6),400);st.shock-=3;return "Becas de una ONG: una organización ofrece microcréditos y becas. Los 6 más pobres reciben $400 cada uno.";}},
+{t:"Sismo",fn:function(){mul(all(),0.98);mul(low(10),0.9);st.shock+=4;return "Sismo: un temblor daña viviendas. Todos pierden 2% y los 10 más pobres otro 10% por casas frágiles.";}},
+{t:"Video viral",fn:function(){st.shock+=10;return "Video viral: se hace famoso un video con el lujo de la élite local. Nadie pierde dinero, pero el descontento sube muchísimo.";}},
+{t:"Colecta solidaria",fn:function(){var t=top(5),l=low(8),p=0;t.forEach(function(i){var c=st.inc[i]*0.03;st.inc[i]-=c;p+=c;});l.forEach(function(i){st.inc[i]+=p/8;});st.shock-=4;return "Colecta solidaria: la comunidad organiza una kermés. Los 5 más ricos donan 3% y se reparte entre los 8 más pobres; baja la tensión.";}},
+{t:"Burbuja inmobiliaria",fn:function(){mul(top(5),1.12);mul(low(10),0.96);st.shock+=5;return "Burbuja inmobiliaria: suben las rentas. Los 5 más ricos ganan 12% con sus propiedades y los 10 más pobres pierden 4%.";}}
+];
+var EVold=[
+{t:"Crisis económica",fn:function(){low(10).forEach(function(i){st.inc[i]*=0.92;});return "Evento: crisis económica. Los 10 más pobres pierden 8%.";}},
+{t:"Auge exportador",fn:function(){var t=top(5);st.inc.forEach(function(v,i){st.inc[i]=t.indexOf(i)>=0?v*1.1:v*1.04;});return "Evento: auge exportador. Todos ganan, los más ricos más.";}},
+{t:"Remesas",fn:function(){low(6).forEach(function(i){st.inc[i]+=500;});return "Evento: llegan remesas. Los 6 más pobres reciben $500.";}},
+{t:"Inflación",fn:function(){st.inc.forEach(function(v,i){st.inc[i]=v*0.97;});return "Evento: inflación. El poder de compra de todos baja 3%.";}}
+];
+
+function stratum(v){return v<0.7*M0?"var(--low)":(v<1.5*M0?"var(--mid)":"var(--hi)");}
+
+function cityInner(inc,d){
+  var sky=d<35?"#a9d8ee":d<60?"#f0d3a4":d<80?"#d39a84":"#5e3036";
+  var h='<rect width="300" height="110" fill="'+sky+'"/><circle cx="262" cy="20" r="'+(d<60?12:8)+'" fill="'+(d<60?"#fff3b0":"#bbb")+'"/>';
+  if(d<60)h+='<ellipse cx="60" cy="18" rx="22" ry="6" fill="#fff" opacity=".7"/><ellipse cx="170" cy="26" rx="18" ry="5" fill="#fff" opacity=".6"/>';
+  h+='<rect y="92" width="300" height="18" fill="#4a5568"/><rect y="102" width="300" height="1.5" fill="#cbd5e0" opacity=".5"/>';
+  inc.forEach(function(v,i){
+    var x=6+i*14.5,r=v/M0,f=v>0?stratum(v):"#777",y,hh;
+    if(v<=0||r<0.7){hh=12+Math.max(r,0)*6;y=92-hh;h+='<rect x="'+x+'" y="'+y+'" width="12" height="'+hh+'" style="fill:'+f+'"/><polygon points="'+(x-1)+','+y+' '+(x+6)+','+(y-5)+' '+(x+13)+','+y+'" fill="#5a4636"/><rect x="'+(x+4)+'" y="85" width="4" height="7" fill="#3b2f26"/>';}
+    else if(r<1.5){hh=clamp(22+r*8,22,36);y=92-hh;h+='<rect x="'+x+'" y="'+y+'" width="12" height="'+hh+'" style="fill:'+f+'"/><polygon points="'+(x-1)+','+y+' '+(x+6)+','+(y-8)+' '+(x+13)+','+y+'" fill="#8a6a3a"/><rect x="'+(x+2)+'" y="'+(y+5)+'" width="3" height="3" fill="#fff8c4"/><rect x="'+(x+7)+'" y="'+(y+5)+'" width="3" height="3" fill="#fff8c4"/><rect x="'+(x+4)+'" y="84" width="4" height="8" fill="#3b2f26"/>';}
+    else{hh=clamp(v/30000*72+22,40,80);y=92-hh;h+='<rect x="'+x+'" y="'+y+'" width="12" height="'+hh+'" style="fill:'+f+'"/><rect x="'+(x+5.5)+'" y="'+(y-6)+'" width="1" height="6" fill="#444"/>';for(var wy=y+4;wy<88;wy+=7)h+='<rect x="'+(x+2)+'" y="'+wy+'" width="3" height="3" fill="#fff8c4"/><rect x="'+(x+7)+'" y="'+wy+'" width="3" height="3" fill="#fff8c4"/>';}
+    var pc=v<=0?"#777":(r<0.7&&d>=50?"#d1495b":"#2e9e6a");
+    h+='<circle cx="'+(x+6)+'" cy="98" r="2" fill="#f1c27d"/><rect x="'+(x+4.5)+'" y="100" width="3" height="6" rx="1" fill="'+pc+'"/>';
+  });
+  if(d>=60)for(var k=0;k<4;k++){var px=34+k*65;h+='<rect x="'+px+'" y="95" width="9" height="6" fill="#fff"/><rect x="'+(px+4)+'" y="101" width="1" height="7" fill="#fff"/>';}
+  if(d>=80)h+='<path d="M140 50c3 6 9 8 9 15a9 9 0 0 1-18 0c0-4 2-6 4-8 0 3 2 5 3 5 0-4-1-7 2-12z" fill="#ff7a1a"/>';
+  return h;}
+function pan(x){return '<svg viewBox="0 0 300 110" role="img" aria-hidden="true" style="width:100%;border-radius:8px;border:1px solid var(--ln)">'+x+'</svg>';}
+
+function init(){
+  st={inc:START.slice(),round:1,budget:6000,d:65,shock:0,edu:null,uses:{},over:false,hist:[],log:[]};
+  POL.forEach(function(p){st.uses[p.id]=0;});
+  var ch=$("chart");ch.querySelectorAll(".b").forEach(function(b){b.remove();});
+  START.forEach(function(){var b=document.createElement("div");b.className="b";ch.appendChild(b);});
+  $("log").textContent="Mes 1. Elige tu primera política para empezar.";
+  render();
+}
+
+function render(){
+  var m=mean(st.inc),s=sd(st.inc),o=order();
+  var ds=(s/S0-1)*100,dm=(m/M0-1)*100;
+  $("sR").textContent=Math.min(st.round,10);
+  $("prog").innerHTML=START.slice(0,10).map(function(x,i){return '<i class="'+(i<st.round-1?"on":"")+'"></i>';}).join("");
+  var pa0=mean(o.slice(0,10).map(function(i){return st.inc[i];}));var gs=[["Reducir σ al menos 40%",s<=0.6*S0,"Ahora: "+(ds>0?"+":"−")+Math.abs(ds).toFixed(0)+"%"],["Que los 10 más pobres ganen en promedio $4,500 o más",pa0>=4500,"Ahora: "+money(pa0)],["Bajar el descontento social a menos de 40%",st.d<40,"Ahora: "+Math.round(st.d)+"%"]];
+  $("goals").innerHTML=gs.map(function(g){return '<div class="goal"><span>'+g[0]+'</span><b class="'+(g[1]?"ok":"bad")+'">'+(g[1]?"Cumplida":g[2])+'</b></div>';}).join("");
+  $("cap").textContent=(st.d<35?"Ciudad estable: la gente vive con tranquilidad. ":st.d<60?"Hay tensión: las diferencias empiezan a pesar. ":st.d<80?"Ciudad en conflicto: hay protestas en las calles. ":"Ciudad en crisis: el malestar es incontrolable. ")+"Torre: estrato alto. Casa: medio. Choza: bajo.";
+  $("scene").innerHTML=cityInner(st.inc,st.d);
+  $("sS").textContent=money(s);
+  $("sM").textContent=money(m);
+  $("sMd").textContent=(dm>=0?"Subió ":"Bajó ")+Math.abs(dm).toFixed(0)+"% desde el inicio.";
+  $("sD").textContent=Math.round(st.d)+"%";
+  $("dm").style.width=st.d+"%";$("dm").style.background=st.d>=50?"var(--bad)":"var(--ok)";
+  $("sB").textContent=money(st.budget);
+  var pa=mean(o.slice(0,10).map(function(i){return st.inc[i];})),ra=mean(o.slice(-5).map(function(i){return st.inc[i];}));
+  $("ratio").textContent="Cada columna es una persona. Hoy los 5 más ricos ganan "+(ra/Math.max(pa,1)).toFixed(1)+" veces lo que ganan los 10 más pobres.";
+  var max=Math.max(30000,Math.max.apply(null,st.inc))*1.05;
+  var bars=$("chart").querySelectorAll(".b");
+  st.inc.forEach(function(v,i){bars[i].style.height=Math.max(v/max*100,1)+"%";bars[i].style.background=stratum(v);bars[i].title=money(v);});
+  $("mline").style.bottom=(m/max*100)+"%";$("mlab").style.bottom=(m/max*100)+"%";
+  var lo=Math.max(m-s,0),hi=Math.min(m+s,max);
+  $("band").style.bottom=(lo/max*100)+"%";$("band").style.height=((hi-lo)/max*100)+"%";
+  var box=$("pols");box.innerHTML="";
+  POL.forEach(function(p){
+    var left=3-st.uses[p.id],b=document.createElement("button");
+    b.className="pol";b.disabled=st.over||left<=0||st.budget<p.cost;
+    b.innerHTML=ic(p.id)+"<div><b></b><span></span><small></small></div>";
+    b.querySelector("b").textContent=p.name;
+    b.querySelector("span").textContent=p.desc;
+    b.querySelector("small").textContent=p.risk+" Usos restantes: "+left+(st.budget<p.cost&&left>0?". Fondo insuficiente.":"");
+    b.onclick=function(){play(p);};
+    box.appendChild(b);
+  });
+}
+
+function play(p){
+  if(st.over)return;
+  var b0={m:mean(st.inc),s:sd(st.inc),d:st.d,i:st.inc.slice()};
+  st.uses[p.id]++;st.budget-=p.cost;st.shock=0;
+  var pend=st.edu;st.edu=null;var extra="";
+  if(pend){pend.forEach(function(i){st.inc[i]*=1.1;});extra=" La educación del mes pasado sube los ingresos.";}
+  var m1=p.fn()+extra;
+  var ev=EV[Math.floor(Math.random()*EV.length)];
+  var m2=ev.fn();
+  st.budget+=1000;
+  var mm=mean(st.inc),ss=sd(st.inc);
+  st.d=clamp(st.d+(clamp((ss/mm-0.2)*65,0,100)-st.d)*0.35+st.shock,0,100);
+  var o=b0.i.map(function(v,i){return i;}).sort(function(a,b){return b0.i[a]-b0.i[b];});
+  var sm=function(ix,arr){return ix.reduce(function(t,i){return t+arr[i];},0);};
+  var lo=o.slice(0,10),hi=o.slice(-5);
+  var L={n:st.round,id:p.id,p:p.name,ev:ev.t,ds:ss-b0.s,dm:mm-b0.m,dd:st.d-b0.d,po:(sm(lo,st.inc)/Math.max(sm(lo,b0.i),1)-1)*100,ri:(sm(hi,st.inc)/sm(hi,b0.i)-1)*100};
+  st.log.push(L);st.hist.push([st.inc.slice(),st.d]);
+  $("log").textContent="Mes "+st.round+": "+m1+" "+m2;
+  st.round++;
+  render();
+  showModal(L,m1,m2,st.d>=99.5?"boom":(st.round>10?"end":null));
+}
+
+function showModal(L,m1,m2,next){
+  var pc=function(x){return (x>=0?"sube ":"baja ")+Math.abs(x).toFixed(0)+"%";};
+  var row=function(t,v,good){return '<div class="row"><span>'+t+'</span><b class="'+(good?"ok":"bad")+'">'+v+'</b></div>';};
+  $("mc").innerHTML="<h2>Mes "+L.n+": "+L.p+"</h2><p class=\"sm hd\">Así cambió tu ciudad este mes.</p><p>"+m1+"</p><p><b>Evento aleatorio.</b> "+m2+"</p>"+
+   row("Desigualdad (σ)",(L.ds<0?"baja ":"sube ")+money(Math.abs(L.ds)),L.ds<0)+
+   row("Ingreso promedio",(L.dm<0?"baja ":"sube ")+money(Math.abs(L.dm)),L.dm>=0)+
+   row("Descontento social",(L.dd<0?"baja ":"sube ")+Math.abs(L.dd).toFixed(0)+" puntos",L.dd<0)+
+   row("Ingreso de los 10 más pobres",pc(L.po),L.po>=0)+
+   row("Ingreso de los 5 más ricos",pc(L.ri),L.ri<=0)+
+   '<p style="margin-top:14px"><button class="go" id="mok">Continuar</button></p>';
+  $("modal").classList.remove("hide");
+  $("mok").onclick=function(){$("modal").classList.add("hide");if(next)finish(next);};
+  $("mok").focus();
+}
+
+function summary(E){
+  var g={},ev={},h="<h2>Qué pasó con tus decisiones</h2><p class=\"sm hd\">Efecto acumulado de cada política durante tu mandato.</p>";
+  var pc=function(x){return (x>=0?"+":"−")+Math.abs(x).toFixed(0)+"%";};
+  st.log.forEach(function(l){var o=g[l.id]||(g[l.id]={n:0,ds:0,po:0,ri:0,nm:l.p});o.n++;o.ds+=l.ds;o.po+=l.po;o.ri+=l.ri;ev[l.ev]=(ev[l.ev]||0)+1;});
+  Object.keys(g).forEach(function(k){var o=g[k];h+='<div class="row"><span style="display:flex;gap:8px">'+ic(k)+"<span><b>"+o.nm+"</b> (usada "+o.n+(o.n>1?" veces":" vez")+")<br><span class=\"sm\">σ "+(o.ds<0?"bajó ":"subió ")+money(Math.abs(o.ds))+". Pobres "+pc(o.po)+", ricos "+pc(o.ri)+".</span></span></span></div>";});
+  h+="<p style=\"margin-top:12px\"><b>Eventos que vivió la ciudad:</b> "+Object.keys(ev).map(function(k){return k+" ("+ev[k]+")";}).join(", ")+".</p>";
+  var s=st.log.slice().sort(function(a,b){return a.ds-b.ds;}),b=s[0],w=s[s.length-1];
+  h+="<p><b>Tu mejor decisión:</b> "+b.p+" en el mes "+b.n+". <b>La que más pesó en contra:</b> "+w.p+" en el mes "+w.n+".</p>";
+  h+="<p><b>Mes a mes:</b></p><p>"+st.log.map(function(l){return '<span class="chip">'+l.n+". "+SH[l.id]+": σ "+(l.ds<0?"baja":"sube")+"</span>";}).join("")+"</p>";
+  h+="<p>"+{paz:"Tus políticas acercaron los ingresos y la mayoría sintió que el sistema era justo: hay más cohesión social y menos conflicto.",muros:"La ciudad sobrevivió, pero la riqueza quedó concentrada. Los estratos viven separados y con poca movilidad social: una sociedad con muros invisibles.",fuego:"La brecha y el malestar acumulado rompieron la cohesión. Cuando la desigualdad se percibe como injusta, se convierte en conflicto abierto."}[E]+"</p>";
+  return h;
+}
+
+function buildStrip(E){
+  var mid=st.hist[Math.min(4,st.hist.length-1)]||[st.inc,st.d];
+  var used=POL.filter(function(p){return st.uses[p.id]>0;}).sort(function(a,b){return st.uses[b.id]-st.uses[a.id];}).slice(0,3);
+  var p3='<rect width="300" height="110" fill="#1f2d44"/>';
+  used.forEach(function(p,i){var cx=55+i*95;p3+='<g style="fill:none;stroke:#fff;stroke-width:1.5"><use href="#i-'+p.id+'" x="'+(cx-22)+'" y="18" width="44" height="44"/></g><text x="'+cx+'" y="80" font-size="10" fill="#fff" text-anchor="middle">'+SH[p.id]+'</text><text x="'+cx+'" y="95" font-size="9" fill="#9fb3cc" text-anchor="middle">usada '+st.uses[p.id]+(st.uses[p.id]>1?" veces":" vez")+'</text>';});
+  var p4=cityInner(st.inc,st.d);
+  if(E==="paz")[40,130,215].forEach(function(x){p4+='<circle cx="'+x+'" cy="34" r="9" fill="#2e9e6a"/><rect x="'+(x-1)+'" y="42" width="2" height="10" fill="#6b4f3a"/>';});
+  else if(E==="muros")p4+='<rect x="141" y="22" width="8" height="72" fill="#222"/><rect x="141" y="40" width="8" height="2" fill="#555"/><rect x="141" y="60" width="8" height="2" fill="#555"/><rect x="190" y="84" width="34" height="6" fill="#f2b01e"/>';
+  else p4+='<path d="M60 52c3 6 9 8 9 15a9 9 0 0 1-18 0c0-4 2-6 4-8 0 3 2 5 3 5 0-4-1-7 2-12z" fill="#ff7a1a"/><circle cx="228" cy="30" r="6" fill="#ff3b30"/>';
+  var cap=["Inicio: la ciudad parte con grandes diferencias de ingreso.","Mitad del mandato: así se veía tu ciudad hacia el mes 5.","Las políticas que más usaste durante el mandato.",{paz:"Resultado: una ciudad en paz, con ingresos más parejos.",muros:"Resultado: una ciudad dividida por un muro entre estratos.",fuego:"Resultado: una ciudad en llamas por el estallido social."}[E]];
+  var pn=[pan(cityInner(START,65)),pan(cityInner(mid[0],mid[1])),pan(p3),pan(p4)];
+  $("strip").innerHTML=pn.map(function(x,i){return "<figure>"+x+"<figcaption>"+cap[i]+"</figcaption></figure>";}).join("");
+}
+
+function finish(kind){
+  st.over=true;
+  var m=mean(st.inc),s=sd(st.inc);
+  var won=kind==="end"&&s<=0.6*S0&&mean(low(10).map(function(i){return st.inc[i];}))>=4500&&st.d<40;
+  var E=kind==="boom"||st.d>=70?"fuego":(won?"paz":"muros");
+  $("eT").textContent={paz:"Final 1: Ciudad en paz",muros:"Final 2: Dos ciudades, un muro",fuego:"Final 3: La ciudad arde"}[E];
+  $("eS").textContent=won?"Cumpliste las tres metas.":"No lograste cumplir todas las metas.";
+  buildStrip(E);
+  $("eB").innerHTML='<p><b>σ:</b> '+money(S0)+' a '+money(s)+' ('+((s/S0-1)*100).toFixed(0)+'%)<br><b>Ingreso promedio:</b> '+money(M0)+' a '+money(m)+' ('+((m/M0-1)*100).toFixed(0)+'%)<br><b>Descontento:</b> '+Math.round(st.d)+'%</p>'+summary(E);
+  $("game").classList.add("hide");$("end").classList.remove("hide");window.scrollTo(0,0);
+}
+
+var LEG='<details class="card"><summary>Significado de los símbolos</summary>'+
+'<p><i class="sw" style="background:var(--hi)"></i>Torre con muchas ventanas: estrato alto, ingreso muy superior al promedio.</p>'+
+'<p><i class="sw" style="background:var(--mid)"></i>Casa con techo: estrato medio.</p>'+
+'<p><i class="sw" style="background:var(--low)"></i>Choza: estrato bajo, ingreso inferior a 70% del promedio inicial.</p>'+
+'<p><i class="sw" style="background:#777"></i>Edificio gris: habitante sin empleo.</p>'+
+'<p><i class="sw" style="background:#2e9e6a"></i>Persona verde: vive bien. <i class="sw" style="background:#d1495b"></i>Persona roja: sufre en una ciudad descontenta.</p>'+
+'<p>Cielo azul: calma. Naranja: tensión. Rojo oscuro: crisis social.</p>'+
+'<p>Cartel blanco en la calle: protesta (descontento de 60% o más). Llama: estallido (80% o más).</p>'+
+'<p>'+ic("imp")+'Impuesto progresivo '+ic("sub")+'Subsidio '+ic("sal")+'Salario mínimo</p>'+
+'<p>'+ic("edu")+'Educación '+ic("emp")+'Recorte a empresas '+ic("nada")+'No hacer nada</p>'+
+'<p>Árboles verdes: paz y cohesión. Muro oscuro: división entre estratos. Franja amarilla: barrera.</p>'+
+'<p>Línea punteada: ingreso promedio. Franja azul: de σ por debajo a σ por encima del promedio.</p></details>';
+$("leg1").innerHTML=LEG;$("leg2").innerHTML=LEG;
+$("start").onclick=function(){$("intro").classList.add("hide");$("game").classList.remove("hide");init();window.scrollTo(0,0);};
+$("again").onclick=function(){$("end").classList.add("hide");$("game").classList.remove("hide");init();window.scrollTo(0,0);};
+})();
+</script>
+</body>
+</html>
